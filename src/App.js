@@ -8,6 +8,8 @@ import {useState} from "react";
 import api from "./api/categories";
 import Product from "./components/Product";
 import Login from "./components/Login";
+import Registration from "./components/Registration";
+import registration from "./components/Registration";
 
 function App() {
     const [page, setPage] = useState(0)
@@ -105,6 +107,52 @@ function App() {
         }
     }
 
+    //Register
+    const register = async (email, password, firstName, lastName, pesel, mailAddress, firmName, nip, firmAddress, firmMailingAddress, firm) => {
+        const config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'http://127.0.0.1:8000/api/register',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            data : JSON.stringify({
+                name: firstName,
+                firstName: firstName,
+                lastName: lastName,
+                pesel: pesel,
+                email: email,
+                password: password,
+                mailingAddress: mailAddress,
+                accountType: firm ? 'B' : 'I',
+                companyName: firmName,
+                nip: nip,
+                companyMailingAddress: firmMailingAddress,
+                companyAddress: firmAddress
+            })
+        };
+
+        try{
+            const response = await api.request(config)
+            console.log(response.data)
+            setAuthUser(response.data.data)
+            setPage(0)
+
+        } catch (err) {
+            if (err.response) {
+                //not in 200 response range
+                console.log(err.response.data)
+                console.log(err.response.status)
+                console.log(err.response.headers)
+            } else {
+                console.log(`Error ${err.message}`)
+            }
+            alert("błędne dane logowania")
+        }
+
+    }
+
     //Login
     const login = async (login, password) => {
         try {
@@ -187,20 +235,18 @@ function App() {
     }
 
     //nav handler
-    const changePage = (page) => {
-        setPage(page)
+    const changePage = (pageId) => {
+        setPage(pageId)
         setLoginTrigger(false)
     }
 
-  return (
-    <div>
-        <Header onLogin={changeLoginTrigger} onLogout={logout} onNav={changePage} user={authUser} />
-
-        { loginTrigger ?
-            <div className='container align-content-center justify-content-center' style={{minHeight: '80vh'}}>
-                <Login onReturn={changeLoginTrigger} onLogin={login}/>
-            </div>
-            : <main className='row g-0'>
+    const pages = () => {
+        if (page === 1) {
+            return (<main className='row g-0 ' style={{minHeight: "80vh"}}>
+                <h1>Hello</h1>
+            </main>)
+        } else if (page === 2) {
+            return (<main className='row g-0'>
                 <div className="col-2 bg-secondary" style={{minHeight: '80vh'}}>
                     <Nav categoryList={categories} subCategoryList={subCategories} onCategory={fetchSubCategories} onSubcategory={fetchProducts} />
                 </div>
@@ -209,8 +255,27 @@ function App() {
                         product ? <Product product={product}/> : <ProductList productList={products} onProduct={fetchProduct}/>
                     }
                 </div>
-            </main>
+            </main>)
+        } else if (page === 3) {
+            return (<main className='row g-0' style={{minHeight: "80vh"}}>
+                <h1>KOSZ</h1>
+            </main>)
+        } else if (page === 4) {
+            return (<main className='row g-0' style={{minHeight: "80vh"}}>
+                <Registration onRegistration={register} />
+            </main>)
         }
+    }
+
+  return (
+    <div>
+        <Header onLogin={changeLoginTrigger} onLogout={logout} onRegistration={() => changePage(4)} onNav={changePage} user={authUser} />
+
+        { loginTrigger ?
+            <div className='container align-content-center justify-content-center' style={{minHeight: '80vh'}}>
+                <Login onReturn={changeLoginTrigger} onLogin={login}/>
+            </div>
+            : pages()}
         <Footer />
     </div>
   );

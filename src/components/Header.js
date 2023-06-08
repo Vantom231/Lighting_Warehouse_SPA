@@ -1,4 +1,4 @@
-const Header = ({onLogin, onLogout, onNav, user}) => {
+const Header = ({onLogin, onLogout, onRegistration, onNav, user}) => {
    return (
        <header className='navbar navbar-dark p-3' style={{backgroundColor: '#3333AA'}}>
            <div className='navbar-brand h1 mb-2 mb-md-0'>Lightning Warehouse</div>
@@ -18,7 +18,7 @@ const Header = ({onLogin, onLogout, onNav, user}) => {
                            <button className='btn btn-outline-info' onClick={() => onLogin(true)}>Login</button>
                        </li>
                        <li className='nav-link px-2'>
-                           <button className='btn btn-outline-danger'>Register</button>
+                           <button className='btn btn-outline-danger' onClick={onRegistration}>Zarejestruj</button>
                        </li>
                    </ul>
                }

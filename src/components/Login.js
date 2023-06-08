@@ -13,7 +13,7 @@ const Login = ({onReturn, onLogin}) => {
                         onLogin(login, password)
                     }}>
                         <div className='row p-1'>
-                            <div className="col-4 text-end">Login: </div>
+                            <div className="col-4 text-end">Email: </div>
                             <div className="col-8"><input type="text" className='form-text' value={login} onChange={(e) => setLogin(e.target.value)} required/></div>
                         </div>
                         <div className="row p-1">
