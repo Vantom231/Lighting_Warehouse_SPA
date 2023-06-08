@@ -1,22 +1,7 @@
-const Nav = () => {
-    const categoryList = [
-        {
-            id: 1,
-            name: "cat1",
-        },
-        {
-            id: 2,
-            name: "cat2",
-        },
-        {
-            id: 3,
-            name: "cat3",
-        },
-        {
-            id: 4,
-            name: "cat4",
-        },
-    ]
+
+
+const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory}) => {
+
 
     const subcategoryList = [
         {
@@ -48,7 +33,7 @@ const Nav = () => {
                     <ul className='nav'>
                         {categoryList.map(
                                 (category) =>
-                                    <li className={'nav-item col-12 mb-1'}>{category.name}</li>
+                                    <li key={category.id} className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(category.id)}>{category.name}</div></li>
                         )}
                     </ul>
                 </div>
@@ -58,12 +43,14 @@ const Nav = () => {
                 </div>
 
                 <div className="p-3">
+                    {subCategoryList &&
                     <ul className='nav'>
-                        {subcategoryList.map(
-                            (subcategory) =>
-                                <li className={'nav-item col-12 mb-1'}>{subcategory.name}</li>
+                        {subCategoryList.map(
+                            (subCategory) =>
+                                <li key={subCategory.id} className={'nav-item col-12 mb-1'}><div onClick={() => onSubcategory(subCategory.id)}>{subCategory.name}</div></li>
                         )}
                     </ul>
+                    }
                 </div>
             </div>
         </div>
