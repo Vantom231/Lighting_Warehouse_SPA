@@ -1,60 +1,58 @@
+import {useState} from "react";
 
 
-const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory}) => {
-
-
-    const subcategoryList = [
-        {
-            id: 1,
-            name: "subcat1",
-        },
-        {
-            id: 2,
-            name: "subcat2",
-        },
-        {
-            id: 3,
-            name: "subcat3",
-        },
-        {
-            id: 4,
-            name: "subcat4",
-        },
-    ]
-    return <nav>
-        <div className="bg-secondary text-light" color="white">
+const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory, page}) => {
+    return (<nav>
+        <div className=" text-light" color="white">
             <div className="py-2">
 
-                <div className="border-bottom">
-                    <p className='h5'>Kateogrie</p>
-                </div>
+                {page === 2 && <div className="border-bottom">
+                        <p className='h5'>Kateogrie</p>
+                    </div>
+                }
 
                 <div className="p-3">
                     <ul className='nav'>
-                        {categoryList.map(
+                        {page === 2 && categoryList.map(
                                 (category) =>
                                     <li key={category.id} className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(category.id)}>{category.name}</div></li>
                         )}
                     </ul>
                 </div>
 
-                <div className="border-bottom">
-                    <p className="h6">PodKateogrie</p>
-                </div>
+                {page === 2 && <div>
+                    <div className="border-bottom">
+                        <p className="h6">PodKateogrie</p>
+                    </div>
 
-                <div className="p-3">
-                    {subCategoryList &&
-                    <ul className='nav'>
-                        {subCategoryList.map(
-                            (subCategory) =>
-                                <li key={subCategory.id} className={'nav-item col-12 mb-1'}><div onClick={() => onSubcategory(subCategory.id)}>{subCategory.name}</div></li>
-                        )}
-                    </ul>
-                    }
-                </div>
+                    <div className="p-3">
+                        {subCategoryList &&
+                            <ul className='nav'>
+                                {subCategoryList.map(
+                                    (subCategory) =>
+                                        <li key={subCategory.id} className={'nav-item col-12 mb-1'}><div onClick={() => onSubcategory(subCategory.id)}>{subCategory.name}</div></li>
+                                )}
+                            </ul>
+                        }
+                    </div>
+                </div>}
+
+                {page === 5 &&
+                    <div>
+                        <div className="border-bottom">
+                            <p className="h6">Menu: </p>
+                        </div>
+
+                        <ul className='nav'>
+                                    <li className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(1)}>Podsumowanie</div></li>
+                                    <li className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(2)}>Zamówienia Otwarte</div></li>
+                                    <li className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(3)}>Zamówienia zamknięte</div></li>
+                        </ul>
+                    </div>
+                }
             </div>
         </div>
-    </nav>
+    </nav>)
 }
 
 export default Nav

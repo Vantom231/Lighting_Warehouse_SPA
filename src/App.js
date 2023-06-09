@@ -9,21 +9,30 @@ import api from "./api/categories";
 import Product from "./components/Product";
 import Login from "./components/Login";
 import Registration from "./components/Registration";
-import registration from "./components/Registration";
 import Cart from "./components/Cart";
+import WorkPanel from "./components/WorkPanel";
 
 function App() {
+    // site variables
     const [page, setPage] = useState(0)
     const [cartList, setCartList] = useState( [])
     const [categories, setCategories] = useState([{id:100,name:"test"}, {id:101,name:"test2"}])
     const [subCategories, setSubCategories] = useState([])
     const [products, setProducts] = useState([])
     const [product, setProduct] = useState([])
+
+    // worker page variables
+    const [orders, setOrders] = useState()
+    const [workPanelPage, setWorkPanelPage] = useState(1)
+
+    // auth variables
     const [bearer, setBearer] = useState("")
     const [loginTrigger, setLoginTrigger] = useState(true)
     const [authUser, setAuthUser] = useState("")
     const [updateUser, setUpdateUser] = useState(false)
 
+
+    // fetch categories on startup
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -47,14 +56,16 @@ function App() {
         console.log(categories)
     },[])
 
+    // fetch auth user after login
     useEffect( () => {
         if ( updateUser === true && bearer !== "" ) {
-            fetchAuthUser();
             setUpdateUser(false);
+            fetchAuthUser();
         }
     },[updateUser, bearer])
 
-    //return all Subcategories where categoryId
+    //API
+    //fetch all Subcategories where categoryId
     const fetchSubCategories = async (categoryId) => {
         try {
             const response = await api.get(`/subcategories?categoryId[eq]=${categoryId}`)
@@ -72,7 +83,7 @@ function App() {
         }
     }
 
-    //return all Products where subcategoryId
+    //fetch all Products where subcategoryId
     const fetchProducts = async (subCategoryId) => {
         try {
             const response = await api.get(`/products?subcategoryId[eq]=${subCategoryId}`)
@@ -91,7 +102,7 @@ function App() {
         }
     }
 
-    //return Product where id
+    //fetch Product where id
     const fetchProduct = async (id) => {
         try {
             const response = await api.get(`/products?id[eq]=${id}`)
@@ -110,7 +121,9 @@ function App() {
     }
 
     //Register
-    const register = async (email, password, firstName, lastName, pesel, mailAddress, firmName, nip, firmAddress, firmMailingAddress, firm) => {
+    const register = async (email, password, firstName, lastName, pesel,
+                            mailAddress, firmName, nip, firmAddress,
+                            firmMailingAddress, firm) => {
         const config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -150,12 +163,76 @@ function App() {
             } else {
                 console.log(`Error ${err.message}`)
             }
-            alert("błędne dane logowania")
+            alert("błędne dane rejestracji")
         }
 
     }
+    // fetch all Orders
+    const fetchOrders = () => {
+        console.log("fetch Orders")
+            return fetchOrdersCustom('http://127.0.0.1:8000/api/orders')
 
-    //Login
+    }
+
+    // fetch all Orders by url (for pagination)
+    const fetchOrdersCustom = async (url) => {
+        const config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: url,
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${bearer}`
+            },
+            data: ''
+        }
+
+        try{
+            const response = await api.request(config)
+            console.log(response.data)
+            setOrders(response.data)
+        } catch (err) {
+            if (err.response) {
+                //not in 200 response range
+                console.log(err.response.data)
+                console.log(err.response.status)
+                console.log(err.response.headers)
+            } else {
+                console.log(`Error ${err.message}`)
+            }
+        }
+    }
+
+    const fetchCustom = async (url, target) => {
+        const config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: url,
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${bearer}`
+            },
+            data: ''
+        }
+
+        try{
+            const response = await api.request(config)
+            console.log(response.data)
+            target(response.data.data)
+        } catch (err) {
+            if (err.response) {
+                //not in 200 response range
+                console.log(err.response.data)
+                console.log(err.response.status)
+                console.log(err.response.headers)
+            } else {
+                console.log(`Error ${err.message}`)
+            }
+        }
+    }
+
+    // AUTH
+    // Login
     const login = async (login, password) => {
         try {
             const data = JSON.stringify({
@@ -190,13 +267,13 @@ function App() {
         }
     }
 
-    //logout
+    // logout
     const logout = () => {
         setBearer("")
         setAuthUser("")
     }
 
-    //get authenticated user
+    // get authenticated user
     const fetchAuthUser = async () => {
             try {
                 const headers = {
@@ -231,10 +308,11 @@ function App() {
 
     }
 
-    //turns on/off login screen
+    // turns on/off login screen
     const changeLoginTrigger = (bool) => {
         setLoginTrigger(bool)
     }
+
 
     //nav handler
     const changePage = (pageId) => {
@@ -270,34 +348,58 @@ function App() {
         setCartList(cartList.map((item) => item.productId === productId ? {...item, quantity: quantity} : item ))
     }
 
+    // worker Panel
+    // change page in Worker Panel
+    const changeWorkerPanel = (page) => {
+        setWorkPanelPage(page)
+    }
+
+
     // jsx
     const pages = () => {
         if (page === 1) {
-            return (<main className='row g-0 ' style={{minHeight: "80vh"}}>
-                <h1>Hello</h1>
-            </main>)
+            return (
+                <main className='row g-0 ' style={{minHeight: "80vh"}}>
+                    <h1>Hello</h1>
+                </main>)
         } else if (page === 2) {
-            return (<main className='row g-0'>
-                <div className="col-2 bg-secondary" style={{minHeight: '80vh'}}>
-                    <Nav categoryList={categories} subCategoryList={subCategories} onCategory={fetchSubCategories} onSubcategory={fetchProducts} />
-                </div>
-                <div className='col-10' style={{minHeight: '80vh'}}>
-                    {
-                        product ? <Product product={product} onCart={addCartItem}/> : <ProductList productList={products} onProduct={fetchProduct}/>
-                    }
-                </div>
-            </main>)
+            return (
+                <main className='row g-0'>
+                    <div className="col-2 bg-secondary" style={{minHeight: '80vh'}}>
+                        <Nav categoryList={categories} subCategoryList={subCategories} page={page} onCategory={fetchSubCategories} onSubcategory={fetchProducts} />
+                    </div>
+                    <div className='col-10' style={{minHeight: '80vh'}}>
+                        {
+                            product ? <Product product={product} onCart={addCartItem}/> : <ProductList productList={products} onProduct={fetchProduct}/>
+                        }
+                    </div>
+                </main>)
         } else if (page === 3) {
-            return (<main className='row g-0' style={{minHeight: "80vh"}}>
-                <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} />
-            </main>)
+            return (
+                <main className='row g-0' style={{minHeight: "80vh"}}>
+                    <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} />
+                </main>)
         } else if (page === 4) {
-            return (<main className='row g-0' style={{minHeight: "80vh"}}>
-                <Registration onRegistration={register} />
-            </main>)
+            return (
+                <main className='row g-0' style={{minHeight: "80vh"}}>
+                    <Registration onRegistration={register} />
+                </main>)
+        } else if (page === 5) {
+            return (
+                    <main className='row g-0'>
+                        <div className="col-2 bg-secondary" style={{minHeight: '80vh'}}>
+                            <Nav page={page} onCategory={changeWorkerPanel}/>
+                        </div>
+                        <div className='col-10' style={{minHeight: '80vh'}}>
+                            <WorkPanel page={workPanelPage} orders={orders}
+                                       updateOrders={fetchOrders} updateOrdersCustom={fetchOrdersCustom}
+                                       bearer={bearer}/>
+
+                        </div>
+                    </main>
+            )
         }
     }
-
   return (
     <div>
         <Header onLogin={changeLoginTrigger} onLogout={logout} onRegistration={() => changePage(4)} onNav={changePage} user={authUser} />

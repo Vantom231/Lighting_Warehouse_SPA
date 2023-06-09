@@ -15,7 +15,7 @@ const Cart = ({cartList, onDelete, onQuantity}) => {
                             </div>
                             <div className='col-3 text-end row'>
                                 <div className="col-6"><input type="number" value={cartItem.quantity} onChange={(e) => onQuantity(e.target.value, cartItem.productId)} className='form-text' style={{width: "40px"}}/></div>
-                                <div className="col-6 text-danger" onClick={() => onDelete(cartItem.productId)}>anuluj</div>
+                                <div className="col-6 text-danger" onClick={() => onDelete(cartItem.productId)}>usuń</div>
 
 
                             </div>

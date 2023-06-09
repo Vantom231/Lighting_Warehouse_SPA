@@ -17,6 +17,10 @@ const Product = ({product, onCart}) => {
                         {single && single.name}
                     </div>
 
+                    <p className='m-4 p-3 bg-light' style={{textAlign: "justify"}}>
+                        {single.description}
+                    </p>
+
                     <div className='row justify-content-end g-4 my-3'>
                         <div className='col-4 text-end'>
                             {single.price} zł
