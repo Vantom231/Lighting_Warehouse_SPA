@@ -10,9 +10,11 @@ import Product from "./components/Product";
 import Login from "./components/Login";
 import Registration from "./components/Registration";
 import registration from "./components/Registration";
+import Cart from "./components/Cart";
 
 function App() {
     const [page, setPage] = useState(0)
+    const [cartList, setCartList] = useState( [])
     const [categories, setCategories] = useState([{id:100,name:"test"}, {id:101,name:"test2"}])
     const [subCategories, setSubCategories] = useState([])
     const [products, setProducts] = useState([])
@@ -240,6 +242,35 @@ function App() {
         setLoginTrigger(false)
     }
 
+
+    //cart
+    //delete item from cartList
+    const deleteCartItem = (id) => {
+        setCartList(cartList.filter((e) => e.productId !== id))
+    }
+
+    //add item to cartList
+    const addCartItem = (name, price, quantity, productId) => {
+        if (cartList.filter((i) => i.productId === productId).length > 0) {
+            alert("produkt znajduje się już w koszyku")
+        } else {
+            const newItem = {
+                name: name,
+                price: price,
+                quantity: quantity,
+                productId: productId,
+            }
+
+            setCartList([...cartList, newItem])
+        }
+    }
+
+    // changes quantity of item in cartList
+    const changeQuantity = (quantity, productId) => {
+        setCartList(cartList.map((item) => item.productId === productId ? {...item, quantity: quantity} : item ))
+    }
+
+    // jsx
     const pages = () => {
         if (page === 1) {
             return (<main className='row g-0 ' style={{minHeight: "80vh"}}>
@@ -252,13 +283,13 @@ function App() {
                 </div>
                 <div className='col-10' style={{minHeight: '80vh'}}>
                     {
-                        product ? <Product product={product}/> : <ProductList productList={products} onProduct={fetchProduct}/>
+                        product ? <Product product={product} onCart={addCartItem}/> : <ProductList productList={products} onProduct={fetchProduct}/>
                     }
                 </div>
             </main>)
         } else if (page === 3) {
             return (<main className='row g-0' style={{minHeight: "80vh"}}>
-                <h1>KOSZ</h1>
+                <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} />
             </main>)
         } else if (page === 4) {
             return (<main className='row g-0' style={{minHeight: "80vh"}}>

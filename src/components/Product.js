@@ -1,7 +1,7 @@
 import image from "./logo192.png"
 import React from "react";
 
-const Product = ({product}) => {
+const Product = ({product, onCart}) => {
     const single = product[0]
     return (
         <div>
@@ -22,7 +22,7 @@ const Product = ({product}) => {
                             {single.price} zł
                         </div>
                         <div className='col-4 justify-content-start'>
-                            <button className='btn btn-outline-primary'>Dodaj do koszyka!</button>
+                            <button className='btn btn-outline-primary' onClick={() => onCart(single.name, single.price, 1, single.id)}>Dodaj do koszyka!</button>
                         </div>
                     </div>
 
