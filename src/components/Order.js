@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import api from "../api/categories";
 
-const Order = ({order, bearer}) => {
+const Order = ({order, bearer, onReturn, changePage, page}) => {
     const [client, setClient] = useState()
     const [ids, setIds] = useState([])
     const [id, setId] = useState(-1)
@@ -40,8 +40,6 @@ const Order = ({order, bearer}) => {
             let tempId = orderUsers.filter((e) => e.role.toUpperCase() === 'C')
             let tempClient = userCollection.filter((e) => e.id === tempId.userId)[0]
             setClient(tempClient)
-            console.log("CLIENT")
-            console.log(client)
         }
     }, [userCollection])
 
@@ -51,10 +49,8 @@ const Order = ({order, bearer}) => {
 
             let table = []
             for (const i in orderProducts) {
-
                 table.push(orderProducts[i].productId)
             }
-            console.log(table)
             fetchProductsCollection(table)
         }
     },[orderProducts])
@@ -62,7 +58,6 @@ const Order = ({order, bearer}) => {
     // put singleUser into userCollection after every userCollection change and increment id
     useEffect( () => {
         if (singleUser !== null) {
-            console.log('userEffect')
             setUserCollection([...userCollection, singleUser])
             setId(id + 1)
         }
@@ -73,10 +68,7 @@ const Order = ({order, bearer}) => {
         if(id !== -1)
             if (ids.length <= id) {
                 setId(-1)
-                console.log("USER COLLECTION")
-                console.log(userCollection)
             } else {
-                console.log("fetching users")
                 fetchCustom(`http://127.0.0.1:8000/api/users?id[eq]=${ids[id]}`, setSingleUser)
             }
     }, [id])
@@ -84,7 +76,6 @@ const Order = ({order, bearer}) => {
     // put singleUser into productCollection after every productCollection change and increment pId
     useEffect( () => {
         if (singleProduct !== null) {
-            console.log('productEffect')
             setProductCollection([...productCollection, singleProduct[0]])
             setPId(pId + 1)
         }
@@ -95,10 +86,7 @@ const Order = ({order, bearer}) => {
         if(pId !== -1)
             if (pIds.length <= pId) {
                 setPId(-1)
-                console.log("PRODUCT COLLECTION")
-                console.log(productCollection)
             } else {
-                console.log("fetching products")
                 fetchCustom(`http://127.0.0.1:8000/api/products?id[eq]=${pIds[pId]}`, setSingleProduct)
             }
     }, [pId])
@@ -132,27 +120,58 @@ const Order = ({order, bearer}) => {
         }
     }
 
+    const finsihOrder = async () => {
+        let currentdate = new Date();
+        let datetime = "" + currentdate.getFullYear() + "-"
+            + (currentdate.getMonth()+1)  + "-"
+            + currentdate.getDate() + " "
+            + currentdate.getHours() + ":"
+            + currentdate.getMinutes() + ":"
+            + currentdate.getSeconds();
+        const data = {finished: true, postDate: datetime}
+
+        const config = {
+            method: 'patch',
+            maxBodyLength: Infinity,
+            url: `http://127.0.0.1:8000/api/orders/${order.id}`,
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${bearer}`
+            },
+            data: JSON.stringify(data)
+        }
+
+        try{
+            const response = await api.request(config)
+            console.log(response.data)
+            onReturn(0)
+        } catch (err) {
+            if (err.response) {
+                //not in 200 response range
+                console.log(err.response.data)
+                console.log(err.response.status)
+                console.log(err.response.headers)
+            } else {
+                console.log(`Error ${err.message}`)
+            }
+        }
+    }
+
 
     const fetchOrderUsers = (url) => {
-        console.log('fetchOrderUsers')
         fetchCustom(url, setOrderUsers)
     }
 
     const fetchOrderProducts = (url) => {
-        console.log('fetchOrderProducts')
         fetchCustom(url, setOrderProducts)
     }
 
     const fetchUsersCollection = (idsList) => {
-        console.log('fetchUsersCollection')
-        console.log(orderUsers)
-        console.log(idsList)
         setIds(idsList)
         setId(0)
     }
     const fetchProductsCollection = (idsList) => {
-        console.log('fetchProductsCollection')
-        console.log(idsList)
         setPIds(idsList)
         setPId(0)
     }
@@ -258,8 +277,15 @@ const Order = ({order, bearer}) => {
                     </div>
                 }
 
-
-
+                <div className='row justify-content-center align-items-center'>
+                    <div className='col-3 d-block'>
+                        <button className='btn btn-danger' onClick={() => onReturn(0)}>Powrót</button>
+                    </div>
+                    <div className='col-6'></div>
+                    <div className='col-3 d-block'>
+                        {!order.finished && <button className='btn btn-primary' onClick={finsihOrder}>Zakończ zamówienie</button>}
+                    </div>
+                </div>
             </div>
         )
     }

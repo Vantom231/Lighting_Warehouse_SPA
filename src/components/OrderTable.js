@@ -1,13 +1,18 @@
 import {useState} from "react";
 import Order from "./Order";
 
-const OrderTable = ({orders, updateOrdersCustom, bearer}) => {
+const OrderTable = ({orders, updateOrdersCustom, bearer, changePage, page, refresh}) => {
     const [orderPage, setOrderPage] = useState(0)
     const [id, setId] = useState(0)
 
     const viewOrder = (id) => {
         setId(id)
         setOrderPage(1)
+    }
+
+    const backToList = (id) => {
+        refresh()
+        setOrderPage(0)
     }
 
     const table = () => {
@@ -19,7 +24,7 @@ const OrderTable = ({orders, updateOrdersCustom, bearer}) => {
                 <tr>
                     <th scope='col'>Id</th>
                     <th scope='col'>data Dodadania</th>
-                    <th scope='col'>data wysłania</th>
+                    <th scope='col'>data zakońćzenia</th>
                     <th scope='col'>czy dostawa</th>
                     <th scope='col'>adres dostawy</th>
                     <th scope='col'>czy faktura</th>
@@ -30,7 +35,7 @@ const OrderTable = ({orders, updateOrdersCustom, bearer}) => {
                     orders.data.map((single) =>
                         <tr key={single.id} onClick={() => viewOrder(single.id)}>
                             <th scope={'row'}>{single.id}</th>
-                            <td>{single.acceptDate}</td>
+                            <td>{single.postDate}</td>
                             <td>{single.sendDate}</td>
                             <td>{single.deliver === 1 ? 'tak' : 'nie'}</td>
                             <td>{single.deliverAddress}</td>
@@ -60,8 +65,8 @@ const OrderTable = ({orders, updateOrdersCustom, bearer}) => {
     }
 
     return orderPage === 0 ?
-       orders && table():
-        <Order order={orders.data.filter((e) => e.id === id)[0]} bearer={bearer}/>
+       orders && orders.data && orders.data.length > 0 && table():
+        <Order order={orders.data.filter((e) => e.id === id)[0]} bearer={bearer} onReturn={backToList} changePage={changePage} page={page}/>
 
 }
 

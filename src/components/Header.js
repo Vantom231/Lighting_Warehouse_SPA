@@ -14,7 +14,7 @@ const Header = ({onLogin, onLogout, onRegistration, onNav, user}) => {
 
    return (
        <header className='navbar navbar-dark p-3 ' style={{backgroundColor: '#2222AA', opacity: '75%'}}>
-           <div className='navbar-brand h1 mb-2 mb-md-0'>Lightning Warehouse</div>
+           <div className='navbar-brand h1 mb-2 mb-md-0'>GlowHouse</div>
            <ul className='nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 ms-md-4'>
                <li className='nav-link px-2' onClick={() => onNav(1)}>Strona główna</li>
                <li className='nav-link px-2' onClick={() => onNav(2)}>Produkty</li>

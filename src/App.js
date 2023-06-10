@@ -11,19 +11,20 @@ import Login from "./components/Login";
 import Registration from "./components/Registration";
 import Cart from "./components/Cart";
 import WorkPanel from "./components/WorkPanel";
+import Main from "./components/Main";
 
 function App() {
     // site variables
-    const [page, setPage] = useState(0)
+    const [page, setPage] = useState(1)
     const [cartList, setCartList] = useState( [])
-    const [categories, setCategories] = useState([{id:100,name:"test"}, {id:101,name:"test2"}])
+    const [categories, setCategories] = useState([])
     const [subCategories, setSubCategories] = useState([])
     const [products, setProducts] = useState([])
     const [product, setProduct] = useState([])
 
     // worker page variables
-    const [orders, setOrders] = useState()
-    const [workPanelPage, setWorkPanelPage] = useState(1)
+    const [workPanelPage, setWorkPanelPage] = useState(0)
+
 
     // auth variables
     const [bearer, setBearer] = useState("")
@@ -52,8 +53,6 @@ function App() {
         }
 
         fetchCategories()
-        //fetchProduct(1)
-        console.log(categories)
     },[])
 
     // fetch auth user after login
@@ -167,30 +166,22 @@ function App() {
         }
 
     }
-    // fetch all Orders
-    const fetchOrders = () => {
-        console.log("fetch Orders")
-            return fetchOrdersCustom('http://127.0.0.1:8000/api/orders')
 
-    }
+    const postCustom = async (url, data) => {
+        console.log(`post Custom: ${url}`)
+        try {
+            const response = await api.request({
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: url,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${bearer}`
+                },
+                data: JSON.stringify(data),
+            })
 
-    // fetch all Orders by url (for pagination)
-    const fetchOrdersCustom = async (url) => {
-        const config = {
-            method: 'get',
-            maxBodyLength: Infinity,
-            url: url,
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${bearer}`
-            },
-            data: ''
-        }
-
-        try{
-            const response = await api.request(config)
-            console.log(response.data)
-            setOrders(response.data)
         } catch (err) {
             if (err.response) {
                 //not in 200 response range
@@ -202,6 +193,63 @@ function App() {
             }
         }
     }
+
+    const sendOrder = async (deliver, deliverAddress, invoice) => {
+        console.log("ORDER SENT :))")
+        let currentdate = new Date();
+        let datetime = "" + currentdate.getFullYear() + "-"
+            + (currentdate.getMonth()+1)  + "-"
+            + currentdate.getDate() + " "
+            + currentdate.getHours() + ":"
+            + currentdate.getMinutes() + ":"
+            + currentdate.getSeconds();
+
+        const temp = {
+            postDate: datetime,
+            deliver: deliver,
+            invoice: invoice,
+            finished: false
+        }
+
+        const data =  deliver ? {...temp, deliverAddress} : temp
+        try {
+
+            const response = await api.request({
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: 'http://127.0.0.1:8000/api/orders',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${bearer}`
+                },
+                data: JSON.stringify(data),
+            })
+            console.log(response)
+
+            postCustom('http://127.0.0.1:8000/api/orderToUsers', { orderId: response.data.data.id, userId: authUser.id, role: 'C'})
+
+            // cartList.forEach( item => await postCustom('http://127.0.0.1:8000/api/orderToProducts', {productId: item.productId, orderId: response.data.data.id, quantity: item.quantity }))
+            for (let i = 0; i < cartList.length; i++) {
+                postCustom('http://127.0.0.1:8000/api/orderToProducts', {productId: cartList[i].productId, orderId: response.data.data.id, quantity: cartList[i].quantity })
+            }
+
+            setCartList([])
+            setPage(6)
+
+        } catch (err) {
+            if (err.response) {
+                //not in 200 response range
+                console.log(err.response.data)
+                console.log(err.response.status)
+                console.log(err.response.headers)
+            } else {
+                console.log(`Error ${err.message}`)
+            }
+            alert("Proszę się zalogować przed złożeniem zamówienia")
+        }
+    }
+
 
     const fetchCustom = async (url, target) => {
         const config = {
@@ -249,7 +297,6 @@ function App() {
                 },
                 data: data,
             })
-            console.log(response.data.token)
             setBearer(response.data.token)
             console.log(bearer)
             setUpdateUser(true)
@@ -356,13 +403,13 @@ function App() {
 
 
     // jsx
-    const pages = () => {
+    const pages = () => {  // home page
         if (page === 1) {
             return (
                 <main className='row g-0 ' style={{minHeight: "80vh"}}>
-                    <h1>Hello</h1>
+                    <Main />
                 </main>)
-        } else if (page === 2) {
+        } else if (page === 2) {  // products
             return (
                 <main className='row g-0'>
                     <div className="col-2 bg-secondary" style={{minHeight: '80vh'}}>
@@ -374,29 +421,39 @@ function App() {
                         }
                     </div>
                 </main>)
-        } else if (page === 3) {
+        } else if (page === 3) {  // cart
             return (
                 <main className='row g-0' style={{minHeight: "80vh"}}>
-                    <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} />
+                    <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} onSubmit={sendOrder} />
                 </main>)
-        } else if (page === 4) {
+        } else if (page === 4) {  // registration
             return (
                 <main className='row g-0' style={{minHeight: "80vh"}}>
                     <Registration onRegistration={register} />
                 </main>)
-        } else if (page === 5) {
+        } else if (page === 5) {  // worker panel
             return (
                     <main className='row g-0'>
                         <div className="col-2 bg-secondary" style={{minHeight: '80vh'}}>
                             <Nav page={page} onCategory={changeWorkerPanel}/>
                         </div>
                         <div className='col-10' style={{minHeight: '80vh'}}>
-                            <WorkPanel page={workPanelPage} orders={orders}
-                                       updateOrders={fetchOrders} updateOrdersCustom={fetchOrdersCustom}
-                                       bearer={bearer}/>
+                            <WorkPanel page={workPanelPage} changePage={changeWorkerPanel} bearer={bearer}/>
 
                         </div>
                     </main>
+            )
+        } else if (page === 6) {  // after order page
+            return (
+                <div className='p-5' style={{height: "80vh"}}>
+                    <p>Dziękujemy za złożenie zamówienia w naszym sklepie internetowym oświetleniowym! Cieszymy się, że wybrałeś nasze produkty i powierzyłeś nam dostarczenie odpowiedniego oświetlenia do Twojego domu.</p>
+                   <p>Twój zamówienie zostało przyjęte i aktualnie jest przetwarzane przez nasz zespół. Dokładamy wszelkich starań, aby zapewnić szybką i bezproblemową realizację Twojej przesyłki.</p>
+                    <p>W przypadku jakichkolwiek pytań lub wątpliwości, nasz zespół obsługi klienta jest gotowy, aby Ci pomóc. Skontaktuj się z nami poprzez nasze dane kontaktowe podane na poniżej</p>
+                    <p>Jeszcze raz dziękujemy za zaufanie i wybór naszego sklepu. Doceniamy Twoje wsparcie i jesteśmy pewni, że będziesz zadowolony z jakości naszych produktów. Oświetl swoje wnętrza z naszymi lampami i ciesz się pięknym światłem!</p>
+                    <p>Życzymy udanych zakupów i pięknych doświadczeń z naszym oświetleniem.</p>
+                    <p> Z poważaniem, <br/>
+                    Zespół sklepu internetowego oświetleniowego GlowHouse</p>
+                </div>
             )
         }
     }
