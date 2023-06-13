@@ -19,7 +19,7 @@ const OrderTable = ({orders, updateOrdersCustom, bearer, changePage, page, refre
         return (
             <div>
                 <h4>Zamówienia otwarte</h4>
-                <table className='table'>
+                <table className='table table-hover'>
                 <thead>
                 <tr>
                     <th scope='col'>Id</th>

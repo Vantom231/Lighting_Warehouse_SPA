@@ -15,7 +15,7 @@ const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory, page}) =
                     <ul className='nav'>
                         {page === 2 && categoryList.map(
                                 (category) =>
-                                    <li key={category.id} className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(category.id)}>{category.name}</div></li>
+                                    <li key={category.id} className={'nav-item btn btn-outline-light col-12 mb-1'}><div onClick={() => onCategory(category.id)}>{category.name}</div></li>
                         )}
                     </ul>
                 </div>
@@ -30,7 +30,7 @@ const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory, page}) =
                             <ul className='nav'>
                                 {subCategoryList.map(
                                     (subCategory) =>
-                                        <li key={subCategory.id} className={'nav-item col-12 mb-1'}><div onClick={() => onSubcategory(subCategory.id)}>{subCategory.name}</div></li>
+                                        <li key={subCategory.id} className={'nav-item btn btn-outline-light col-12 mb-1'}><div onClick={() => onSubcategory(subCategory.id)}>{subCategory.name}</div></li>
                                 )}
                             </ul>
                         }
@@ -44,9 +44,9 @@ const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory, page}) =
                         </div>
 
                         <ul className='nav'>
-                                    <li className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(1)}>Podsumowanie</div></li>
-                                    <li className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(2)}>Zamówienia Otwarte</div></li>
-                                    <li className={'nav-item col-12 mb-1'}><div onClick={() => onCategory(3)}>Zamówienia zamknięte</div></li>
+                                    <li className={'nav-item btn btn-outline-light col-12 mb-1'}><div onClick={() => onCategory(1)}>Podsumowanie</div></li>
+                                    <li className={'nav-item btn btn-outline-light col-12 mb-1'}><div onClick={() => onCategory(2)}>Zamówienia Otwarte</div></li>
+                                    <li className={'nav-item btn btn-outline-light col-12 mb-1'}><div onClick={() => onCategory(3)}>Zamówienia zamknięte</div></li>
                         </ul>
                     </div>
                 }

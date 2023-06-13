@@ -10,7 +10,7 @@ const Product = ({product, onCart}) => {
                 <div className='col-6 justify-content-center'>
 
                     <div className='jusitfy-content-center'>
-                        <img src={image} alt="zdjecie produktu" className='img-fluid d-block mx-auto my-3'/>
+                        <img src={single.imgPath} alt="zdjecie produktu" className='img-fluid d-block mx-auto my-3'/>
                     </div>
 
                     <div className='col-12 h4 text-center p-3'>

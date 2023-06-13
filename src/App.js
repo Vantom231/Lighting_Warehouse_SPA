@@ -12,6 +12,7 @@ import Registration from "./components/Registration";
 import Cart from "./components/Cart";
 import WorkPanel from "./components/WorkPanel";
 import Main from "./components/Main";
+import AdminPanel from "./components/AdminPanel";
 
 function App() {
     // site variables
@@ -455,6 +456,12 @@ function App() {
                     Zespół sklepu internetowego oświetleniowego GlowHouse</p>
                 </div>
             )
+        } else if (page === 7) {  // administrator panel
+            return (
+                <div className='p-3' style={{minHeight: "80vh"}}>
+                    <AdminPanel bearer={bearer}/>
+                </div>
+                    )
         }
     }
   return (

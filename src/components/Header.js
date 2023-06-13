@@ -21,6 +21,7 @@ const Header = ({onLogin, onLogout, onRegistration, onNav, user}) => {
                <li className='nav-link px-2' onClick={() => onNav(3)}>Koszyk</li>
 
                {user.accountType === 'W' && <li className='nav-link px-2' onClick={() => onNav(5)}>Panel pracownika</li> }
+               {user.accountType === 'A' && <li className='nav-link px-2' onClick={() => onNav(7)}>Panel administratora</li> }
            </ul>
                { user !== "" ? <ul className='nav col-12 col-lg-auto mb-2 justify-content-end mb-md-0'>
                        <li className='nav-link px-2 mt-1 text-light'>{accountType()}: {user.firstName} {user.lastName}</li>
