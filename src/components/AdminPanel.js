@@ -66,7 +66,7 @@ const AdminPanel = ({bearer}) => {
                     Panel Administratora
                 </div>
                 <div className="row">
-                    <div className="col-6 p-4">
+                    <div className="col-xl-6 col-12 p-4">
                         <div className='h5 text-center'>Użytkownicy prywatni</div>
                         { invUsers.data && invUsers.data.length >= 0 &&<div>
                             <table className='table table-hover table-sm table-responsive border border-secondary'>
@@ -118,7 +118,7 @@ const AdminPanel = ({bearer}) => {
                             </div>
                         </div>}
                     </div>
-                    <div className="col-6 p-4">
+                    <div className="col-xl-6 col-12 p-4">
                         <div className='h5 text-center'>Użytkownicy Biznesowi</div>
                         {buisUsers.data && buisUsers.data.length && <div>
                             <table className='table table-hover table-sm table-responsive border border-secondary'>
@@ -172,7 +172,7 @@ const AdminPanel = ({bearer}) => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-6 p-4">
+                    <div className="col-xl-6 col-12 p-4">
                         <div className='h5 text-center'>Pracownicy</div>
                         { workers.data && workers.data.length >= 0 &&<div>
                             <table className='table table-hover table-sm table-responsive border border-secondary'>
@@ -224,7 +224,7 @@ const AdminPanel = ({bearer}) => {
                             </div>
                         </div>}
                     </div>
-                    <div className="col-6 p-4">
+                    <div className="col-xl-6 col-12 p-4">
                         <div className='h5 text-center'>Administratorzy</div>
                         {admins.data && admins.data.length && <div>
                             <table className='table table-hover table-sm table-responsive border border-secondary'>

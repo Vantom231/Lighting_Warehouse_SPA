@@ -19,14 +19,14 @@ const OrderTable = ({orders, updateOrdersCustom, bearer, changePage, page, refre
         return (
             <div>
                 <h4>Zamówienia otwarte</h4>
-                <table className='table table-hover'>
+                <table className='table table-hover table-responsive table-sm'>
                 <thead>
                 <tr>
                     <th scope='col'>Id</th>
                     <th scope='col'>data Dodadania</th>
                     <th scope='col'>data zakońćzenia</th>
                     <th scope='col'>czy dostawa</th>
-                    <th scope='col'>adres dostawy</th>
+                    <th scope='col' className='d-md-table-cell d-none'>adres dostawy</th>
                     <th scope='col'>czy faktura</th>
                 </tr>
                 </thead>
@@ -38,7 +38,7 @@ const OrderTable = ({orders, updateOrdersCustom, bearer, changePage, page, refre
                             <td>{single.postDate}</td>
                             <td>{single.sendDate}</td>
                             <td>{single.deliver === 1 ? 'tak' : 'nie'}</td>
-                            <td>{single.deliverAddress}</td>
+                            <td className='d-md-table-cell d-none'>{single.deliverAddress}</td>
                             <td>{single.invoice === 1 ? 'tak' : 'nie'}</td>
                         </tr>
                     )
@@ -47,13 +47,13 @@ const OrderTable = ({orders, updateOrdersCustom, bearer, changePage, page, refre
             </table>
 
                 <div className='row p-3 justify-content-between'>
-                    <div className='col-2'>
+                    <div className='col-md-2 col-4'>
                         {!orders.links.prev ? "" :
                             <button className="btn btn-primary"
                                     onClick={() => updateOrdersCustom(orders.links.prev)}>poprzednia</button>
                         }
                     </div>
-                    <div className='col-2'>
+                    <div className='col-md-2 col-4'>
                         {!orders.links.next ? "" :
                             <button className="btn btn-primary"
                                     onClick={() => updateOrdersCustom(orders.links.next)}>następna</button>

@@ -3,7 +3,7 @@ import {useState} from "react";
 
 const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory, page}) => {
     return (<nav>
-        <div className=" text-light" color="white">
+        <div className="text-light" color="white">
             <div className="py-2">
 
                 {page === 2 && <div className="border-bottom">
@@ -15,7 +15,7 @@ const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory, page}) =
                     <ul className='nav'>
                         {page === 2 && categoryList.map(
                                 (category) =>
-                                    <li key={category.id} className={'nav-item btn btn-outline-light col-12 mb-1'}><div onClick={() => onCategory(category.id)}>{category.name}</div></li>
+                                    <li key={category.id} className={'nav-item btn btn-outline-light col-12 mb-1 border-bottom-0'}><div onClick={() => onCategory(category.id)}>{category.name}</div></li>
                         )}
                     </ul>
                 </div>
@@ -30,7 +30,7 @@ const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory, page}) =
                             <ul className='nav'>
                                 {subCategoryList.map(
                                     (subCategory) =>
-                                        <li key={subCategory.id} className={'nav-item btn btn-outline-light col-12 mb-1'}><div onClick={() => onSubcategory(subCategory.id)}>{subCategory.name}</div></li>
+                                        <li key={subCategory.id} className={'nav-item btn btn-outline-light col-12 mb-1 border-bottom-0'}><div onClick={() => onSubcategory(subCategory.id)}>{subCategory.name}</div></li>
                                 )}
                             </ul>
                         }

@@ -1,13 +1,12 @@
-import image from "./logo192.png"
 import React from "react";
 
-const Product = ({product, onCart}) => {
+const Product = ({product, onCart, onReturn}) => {
     const single = product[0]
     return (
         <div>
             {single &&
             <div className="row g-0">
-                <div className='col-6 justify-content-center'>
+                <div className='col-md-6 justify-content-center'>
 
                     <div className='jusitfy-content-center'>
                         <img src={single.imgPath} alt="zdjecie produktu" className='img-fluid d-block mx-auto my-3'/>
@@ -21,18 +20,21 @@ const Product = ({product, onCart}) => {
                         {single.description}
                     </p>
 
-                    <div className='row justify-content-end g-4 my-3'>
-                        <div className='col-4 text-end'>
+                    <div className='row justify-content-end g-0 my-3'>
+                        <div className='col-md-4 col-12 justify-content-start ps-4'>
+                            <button className='btn btn-outline-primary' onClick={onReturn}>Powrot</button>
+                        </div>
+                        <div className='col-md-4 col-6 text-end pe-4 pt-1'>
                             {single.price} zł
                         </div>
-                        <div className='col-4 justify-content-start'>
+                        <div className='col-md-4 col-6 justify-content-start'>
                             <button className='btn btn-outline-primary' onClick={() => onCart(single.name, single.price, 1, single.id)}>Dodaj do koszyka!</button>
                         </div>
                     </div>
 
                 </div>
-                <div className="col-6 p-3">
-                    <table className='table table-striped'>
+                <div className="col-md-6 p-3">
+                    <table className='table table-striped table-responsive table-sm'>
                         <tbody><tr>
                             <th scope='row'>wysokość: </th>
                             <td>{single.height}</td>

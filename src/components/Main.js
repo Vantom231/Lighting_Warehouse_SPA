@@ -1,6 +1,6 @@
 const Main = () => {
     return (
-        <div className='m-5 row' >
+        <div className='p-5 row w-100' style={{minHeight: "80vh"}} >
             <div className='col-10'>
         <h3 className='mb-4'>Witamy w GlowHouse</h3>
          <p>Witaj w naszym sklepie internetowym dedykowanym oświetleniu! Jesteśmy liderem w branży, oferując szeroki wybór lamp, żarówek i akcesoriów oświetleniowych. Nasza strona główna zapewnia Ci łatwy dostęp do najnowszych trendów w oświetleniu i najwyższej jakości produktów </p>

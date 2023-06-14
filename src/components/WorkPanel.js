@@ -54,7 +54,7 @@ const WorkPanel = ({page, bearer, changePage}) => {
 
 
     return (
-        <div>
+        <div style={{minHeight: "80vh"}}>
             {page === 1 &&
                 <div>
                     Podsumowanie

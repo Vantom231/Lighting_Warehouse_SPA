@@ -251,35 +251,6 @@ function App() {
         }
     }
 
-
-    const fetchCustom = async (url, target) => {
-        const config = {
-            method: 'get',
-            maxBodyLength: Infinity,
-            url: url,
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${bearer}`
-            },
-            data: ''
-        }
-
-        try{
-            const response = await api.request(config)
-            console.log(response.data)
-            target(response.data.data)
-        } catch (err) {
-            if (err.response) {
-                //not in 200 response range
-                console.log(err.response.data)
-                console.log(err.response.status)
-                console.log(err.response.headers)
-            } else {
-                console.log(`Error ${err.message}`)
-            }
-        }
-    }
-
     // AUTH
     // Login
     const login = async (login, password) => {
@@ -402,43 +373,40 @@ function App() {
         setWorkPanelPage(page)
     }
 
+    const returnProduct = () => {
+        setProduct()
+    }
+
 
     // jsx
     const pages = () => {  // home page
         if (page === 1) {
-            return (
-                <main className='row g-0 ' style={{minHeight: "80vh"}}>
-                    <Main />
-                </main>)
+            return <Main />
         } else if (page === 2) {  // products
             return (
                 <main className='row g-0'>
-                    <div className="col-2 bg-secondary" style={{minHeight: '80vh'}}>
+                    <div className="col-md-2 col-12 bg-secondary">
                         <Nav categoryList={categories} subCategoryList={subCategories} page={page} onCategory={fetchSubCategories} onSubcategory={fetchProducts} />
                     </div>
-                    <div className='col-10' style={{minHeight: '80vh'}}>
+                    <div className='col-md-10 col-12' style={{minHeight: "80vh"}}>
                         {
-                            product ? <Product product={product} onCart={addCartItem}/> : <ProductList productList={products} onProduct={fetchProduct}/>
+                            product ? <Product product={product} onCart={addCartItem}  onReturn={returnProduct}/> : <ProductList productList={products} onProduct={fetchProduct}/>
                         }
                     </div>
                 </main>)
         } else if (page === 3) {  // cart
-            return (
-                <main className='row g-0' style={{minHeight: "80vh"}}>
-                    <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} onSubmit={sendOrder} />
-                </main>)
+            return <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} onSubmit={sendOrder} />
+
         } else if (page === 4) {  // registration
-            return (
-                <main className='row g-0' style={{minHeight: "80vh"}}>
-                    <Registration onRegistration={register} />
-                </main>)
+            return <Registration onRegistration={register} />
+
         } else if (page === 5) {  // worker panel
             return (
-                    <main className='row g-0'>
-                        <div className="col-2 bg-secondary" style={{minHeight: '80vh'}}>
+                <main className='row g-0'>
+                    <div className="col-md-2 col-12 bg-secondary">
                             <Nav page={page} onCategory={changeWorkerPanel}/>
                         </div>
-                        <div className='col-10' style={{minHeight: '80vh'}}>
+                        <div className='col-md-10 col-12'>
                             <WorkPanel page={workPanelPage} changePage={changeWorkerPanel} bearer={bearer}/>
 
                         </div>
@@ -465,13 +433,11 @@ function App() {
         }
     }
   return (
-    <div>
+    <div className="" style={{minHeight: '100vh'}}>
         <Header onLogin={changeLoginTrigger} onLogout={logout} onRegistration={() => changePage(4)} onNav={changePage} user={authUser} />
 
         { loginTrigger ?
-            <div className='container align-content-center justify-content-center' style={{minHeight: '80vh'}}>
                 <Login onReturn={changeLoginTrigger} onLogin={login}/>
-            </div>
             : pages()}
         <Footer />
     </div>

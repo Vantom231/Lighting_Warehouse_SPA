@@ -6,18 +6,18 @@ const Cart = ({cartList, onDelete, onQuantity, onSubmit}) => {
     const [address, setAddress] = useState("")
 
     return (
-        <div className='container justify-content-center align-items-center row' style={{minHeight: "80vh"}}>
-            <div className='col-3'></div>
-            <div className='col-6 text-dark'>
+        <div className='justify-content-center align-items-center row w-100' style={{minHeight: "80vh"}}>
+            <div className='col-lg-4 col-md-3'></div>
+            <div className='col-lg-4 col-md-6 text-dark'>
                 {   cartList.length > 0 &&
                     cartList.map((cartItem) =>
-                        <div key={cartItem.id} className='bg-light my-2 p-3 row justify-content-between border broder-1 border-primary'>
-                            <div key={`a ${cartItem.id}`} className="col-3">
-                                <h6 key={`h ${cartItem.id}`}>{cartItem.name}</h6> <br/> {cartItem.price} zł
+                        <div key={cartItem.productId} className='bg-light my-2 p-3 row justify-content-between border broder-1 border-primary'>
+                            <div  className="col-4">
+                                <h6>{cartItem.name}</h6> <br/> {cartItem.price} zł
                             </div>
-                            <div key={`b ${cartItem.id}`} className='col-3 text-end row'>
-                                <div key={`c ${cartItem.id}`} className="col-6"><input key={`i ${cartItem.id}`} type="number" value={cartItem.quantity} onChange={(e) => onQuantity(e.target.value, cartItem.productId)} className='form-text' style={{width: "40px"}}/></div>
-                                <div key={`d ${cartItem.id}`} className="col-6 text-danger" onClick={() => onDelete(cartItem.productId)}>usuń</div>
+                            <div className='col-4 text-end row g-3'>
+                                <div className="col-6"><input key={`i ${cartItem.id}`} type="number" value={cartItem.quantity} onChange={(e) => onQuantity(e.target.value, cartItem.productId)} className='form-text' style={{width: "40px"}}/></div>
+                                <div className="col-6 text-danger text-end" onClick={() => onDelete(cartItem.productId)}>usuń</div>
 
 
                             </div>
@@ -43,10 +43,9 @@ const Cart = ({cartList, onDelete, onQuantity, onSubmit}) => {
                                                 onChange={(e) => setInvoice(e.target.checked)}/>
                             </div>
                         </div>
-                        <div className='row'>
-                            <div className="col-10"></div>
-                            <div className="col-2">
-                                <button className="btn btn-primary" >Zamów</button>
+                        <div className='row justify-content-end'>
+                            <div className="col-sm-3 col-5 mt-3">
+                                <button className="btn btn-primary d-block" >Zamów</button>
                             </div>
                         </div>
                     </form>
@@ -55,7 +54,7 @@ const Cart = ({cartList, onDelete, onQuantity, onSubmit}) => {
 
 
             </div>
-            <div className="col-3"></div>
+            <div className="col-lg-4 col-md-3"></div>
         </div>
     )
 }

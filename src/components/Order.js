@@ -278,11 +278,11 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
                 }
 
                 <div className='row justify-content-center align-items-center'>
-                    <div className='col-3 d-block'>
+                    <div className='col-sm-3 col-4 d-block'>
                         <button className='btn btn-danger' onClick={() => onReturn(0)}>Powrót</button>
                     </div>
-                    <div className='col-6'></div>
-                    <div className='col-3 d-block'>
+                    <div className='col-sm-6 col-4'></div>
+                    <div className='col-sm-3 d-block col-4'>
                         {!order.finished && <button className='btn btn-primary' onClick={finsihOrder}>Zakończ zamówienie</button>}
                     </div>
                 </div>
@@ -291,7 +291,7 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
     }
     return (
         <div>
-            {order !== undefined && client !== undefined  ? source() : <h1>Błąd, proszę spróbować ponownie</h1>}
+            {order !== undefined && client !== undefined  ? source() : <h1>ładowanie, proszę czekać...</h1>}
         </div>
     )
 }
