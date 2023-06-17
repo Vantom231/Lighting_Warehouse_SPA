@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import api from "../api/categories";
 
 
-const WorkPanel = ({page, bearer, changePage}) => {
+const WorkPanel = ({page, bearer, changePage, authUser}) => {
 
     const [orders, setOrders] = useState()
     const [refresh, setRefresh] = useState(false)
@@ -62,7 +62,7 @@ const WorkPanel = ({page, bearer, changePage}) => {
             }
             {page === 2 &&
                 <div className='m-3'>
-                    <OrderTable orders={orders} updateOrdersCustom={fetchOrdersCustom} bearer={bearer} changePage={changePage} page={page} refresh={refreshPage}/>
+                    <OrderTable orders={orders} updateOrdersCustom={fetchOrdersCustom} bearer={bearer} changePage={changePage} page={page} refresh={refreshPage} authUser={authUser}/>
                 </div>
             }
             {page === 3 &&

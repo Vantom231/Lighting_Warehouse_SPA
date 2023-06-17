@@ -423,7 +423,7 @@ function App() {
                             <Nav page={page} onCategory={changeWorkerPanel}/>
                         </div>
                         <div className='col-md-10 col-12'>
-                            <WorkPanel page={workPanelPage} changePage={changeWorkerPanel} bearer={bearer}/>
+                            <WorkPanel page={workPanelPage} changePage={changeWorkerPanel} bearer={bearer} authUser={authUser}/>
 
                         </div>
                     </main>

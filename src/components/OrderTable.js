@@ -1,7 +1,7 @@
 import {useState} from "react";
 import Order from "./Order";
 
-const OrderTable = ({orders, updateOrdersCustom, bearer, changePage, page, refresh}) => {
+const OrderTable = ({orders, updateOrdersCustom, bearer, changePage, page, refresh, authUser}) => {
     const [orderPage, setOrderPage] = useState(0)
     const [id, setId] = useState(0)
 
@@ -66,7 +66,7 @@ const OrderTable = ({orders, updateOrdersCustom, bearer, changePage, page, refre
 
     return orderPage === 0 ?
        orders && orders.data && orders.data.length > 0 && table():
-        <Order order={orders.data.filter((e) => e.id === id)[0]} bearer={bearer} onReturn={backToList} changePage={changePage} page={page}/>
+        <Order order={orders.data.filter((e) => e.id === id)[0]} bearer={bearer} onReturn={backToList} changePage={changePage} page={page} authUser={authUser} />
 
 }
 

@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import api from "../api/categories";
 
-const Order = ({order, bearer, onReturn, changePage, page}) => {
+const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
     const [client, setClient] = useState()
     const [ids, setIds] = useState([])
     const [id, setId] = useState(-1)
@@ -13,6 +13,15 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
     const [productCollection, setProductCollection] = useState([])
     const [orderUsers, setOrderUsers] = useState([])
     const [orderProducts, setOrderProducts] = useState([])
+    const [actionSelect, setActionSelect] = useState("")
+    const [actionTranslate, setActionTranslate] = useState({
+        "A": "Akceptacja zamówienia",
+        "C": "Złożenie zamówienia",
+        "P": "przygotowanie zamówienia",
+        "Z": "anulowanie zamówienia",
+        "S": "wysłanie zamówienia",
+        "X": "Prośba o anulowanie zamówienia"
+})
 
     //load data on render
     useEffect(() => {
@@ -27,7 +36,7 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
         if (orderUsers.length > 0) {
             let table = []
             for (const user in orderUsers) {
-                table.push(orderUsers[user].userId)
+                if (!table.find(e => e === orderUsers[user].userId)) table.push(orderUsers[user].userId)
             }
             fetchUsersCollection(table)
     }
@@ -69,7 +78,8 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
             if (ids.length <= id) {
                 setId(-1)
             } else {
-                fetchCustom(`http://127.0.0.1:8000/api/users?id[eq]=${ids[id]}`, setSingleUser)
+
+                    fetchCustom(`http://127.0.0.1:8000/api/users?id[eq]=${ids[id]}`, setSingleUser)
             }
     }, [id])
 
@@ -118,6 +128,44 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
                 console.log(`Error ${err.message}`)
             }
         }
+    }
+
+    const sendAction = async () => {
+
+        let data = {
+            "userId": authUser.id,
+            "orderId": order.id,
+            "role": actionSelect,
+        }
+        const config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'http://127.0.0.1:8000/api/orderToUsers',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${bearer}`
+            },
+            data : JSON.stringify(data)
+        };
+
+        try{
+            const response = await api.request(config)
+            console.log(response.data)
+            onReturn(0)
+
+        } catch (err) {
+            if (err.response) {
+                //not in 200 response range
+                console.log(err.response.data)
+                console.log(err.response.status)
+                console.log(err.response.headers)
+            } else {
+                console.log(`Error ${err.message}`)
+            }
+            alert("błąd przy wysyłaniu akcji")
+        }
+
     }
 
     const finsihOrder = async () => {
@@ -176,7 +224,121 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
         setPId(0)
     }
 
+    const userTable = () => {
+        return <table className='table'>
+            <thead>
+            <tr>
+                <th scope='col'> imie i nazwisko</th>
+                <th scope='col'>{client[0].firstName} {client[0].lastName}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>email</td>
+                <td>{client[0].email}</td>
+            </tr>
+            <tr>
+                <td>adres kor.</td>
+                <td>{client[0].mailingAddress}</td>
+            </tr>
+            <tr>
+                <td>dostawa</td>
+                <td>{order.deliver === 1 ? "Tak" : "Nie"}</td>
+            </tr>
+            {order.deliver === 1 &&
+                <tr>
+                    <td>adres Dostawy</td>
+                    <td>{order.deliverAddress}</td>
+                </tr>
+            }
+            <tr>
+                <td>faktura</td>
+                <td>{order.invoice === 1 ? "Tak" : "Nie"}</td>
+            </tr>
 
+            {client[0].nip &&
+                <tr>
+                    <td>nip</td>
+                    <td>{client[0].nip}</td>
+                </tr>
+            }
+            {client[0].companyName &&
+                <tr>
+                    <td>Nazwa firmy</td>
+                    <td>{client[0].companyName}</td>
+                </tr>
+            }
+            {client[0].companyAddress &&
+                <tr>
+                    <td>Adres firmy</td>
+                    <td>{client[0].companyAddress}</td>
+                </tr>
+            }
+            {client[0].companyMailingAddress &&
+                <tr>
+                    <td>Adres kor. firmy</td>
+                    <td>{client[0].companyMailingAddress}</td>
+                </tr>
+            }
+
+            </tbody>
+        </table>
+    }
+
+    const workersTable = () => {
+        return <table className='table'>
+            <thead>
+            <tr>
+                <th scope='col'> imie i nazwisko</th>
+                <th scope='col'> email</th>
+                <th scope='col'> akcja</th>
+            </tr>
+            </thead>
+            <tbody>
+
+                {orderUsers.map((order) => {
+                    return userCollection.filter((e) => e[0].id === order.userId)[0].map((usr) => {
+                        return <tr>
+                        <td>{usr.firstName} {usr.lastName}</td>
+                        <td>{usr.email}</td>
+                        <td>{actionTranslate[order.role]}</td>
+                        </tr>
+                        }
+                    )
+                })}
+
+            </tbody>
+        </table>
+    }
+
+    const productTable = () => {
+        return  <table className='table'>
+            <thead>
+            <tr>
+                <th scope='col'>id</th>
+                <th scope='col'>nazwa</th>
+                <th scope='col'>wysokość</th>
+                <th scope='col'>szerokość</th>
+                <th scope='col'>ilość</th>
+                <th scope='col'>cena/szt</th>
+            </tr>
+            </thead>
+            <tbody>
+            {
+                productCollection.map( (e) => e !== null && e !== undefined &&
+                    <tr>
+                        <td>{e.id}</td>
+                        <td>{e.name}</td>
+                        <td>{e.height}</td>
+                        <td>{e.width}</td>
+                        <td>{orderProducts.filter((o) => o.productId === e.id)[0].quantity}</td>
+                        <td>{e.price}</td>
+                    </tr>
+                )
+            }
+            </tbody>
+        </table>
+    }
 
     const source = () => {
         return (
@@ -185,103 +347,39 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
                     <h4>Infomracje o produkcie</h4>
                 </div>
                 <div className="row">
-                    <table className='table'>
-                        <thead>
-                        <tr>
-                            <th scope='col'> imie i nazwisko</th>
-                            <th scope='col'>{client[0].firstName} {client[0].lastName}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>email</td>
-                            <td>{client[0].email}</td>
-                        </tr>
-                        <tr>
-                            <td>adres kor.</td>
-                            <td>{client[0].mailingAddress}</td>
-                        </tr>
-                        <tr>
-                            <td>dostawa</td>
-                            <td>{order.deliver === 1 ? "Tak" : "Nie"}</td>
-                        </tr>
-                        {order.deliver === 1 &&
-                            <tr>
-                                <td>adres Dostawy</td>
-                                <td>{order.deliverAddress}</td>
-                            </tr>
-                        }
-                        <tr>
-                            <td>faktura</td>
-                            <td>{order.invoice === 1 ? "Tak" : "Nie"}</td>
-                        </tr>
-
-                        {client[0].nip &&
-                            <tr>
-                                <td>nip</td>
-                                <td>{client[0].nip}</td>
-                            </tr>
-                        }
-                        {client[0].companyName &&
-                            <tr>
-                                <td>Nazwa firmy</td>
-                                <td>{client[0].companyName}</td>
-                            </tr>
-                        }
-                        {client[0].companyAddress &&
-                            <tr>
-                                <td>Adres firmy</td>
-                                <td>{client[0].companyAddress}</td>
-                            </tr>
-                        }
-                        {client[0].companyMailingAddress &&
-                            <tr>
-                                <td>Adres kor. firmy</td>
-                                <td>{client[0].companyMailingAddress}</td>
-                            </tr>
-                        }
-
-                        </tbody>
-                    </table>
+                    {userTable()}
                 </div>
 
                 <h5>Informacje o zamówionych produktach</h5>
                 {productCollection !== undefined &&
                     <div className="row">
-                        <table className='table'>
-                            <thead>
-                            <tr>
-                                <th scope='col'>id</th>
-                                <th scope='col'>nazwa</th>
-                                <th scope='col'>wysokość</th>
-                                <th scope='col'>szerokość</th>
-                                <th scope='col'>ilość</th>
-                                <th scope='col'>cena/szt</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                productCollection.map( (e) => e !== null && e !== undefined &&
-                                <tr>
-                                    <td>{e.id}</td>
-                                    <td>{e.name}</td>
-                                    <td>{e.height}</td>
-                                    <td>{e.width}</td>
-                                    <td>{orderProducts.filter((o) => o.productId === e.id)[0].quantity}</td>
-                                    <td>{e.price}</td>
-                                </tr>
-                                )
-                            }
-                            </tbody>
-                        </table>
+                        {productTable()}
                     </div>
                 }
+                <div className="row">
+                    {workersTable()}
+                </div>
 
                 <div className='row justify-content-center align-items-center'>
                     <div className='col-sm-3 col-4 d-block'>
                         <button className='btn btn-danger' onClick={() => onReturn(0)}>Powrót</button>
                     </div>
-                    <div className='col-sm-6 col-4'></div>
+                    <div className='col-sm-6 col-4'>
+                        <form onSubmit={(e) => {
+                            e.preventDefault()
+                            console.log(actionSelect)
+                            sendAction()
+                        }}>
+                            <select className='form-select-sm' value={actionSelect} onChange={(e) => {setActionSelect(e.target.value)}} required>
+                                <option value="" selected disabled>Wybierz akcję</option>
+                                <option value="A">Akceptuj Zamówienie</option>
+                                <option value="P">Przygotuj Zamówienie</option>
+                                <option value="S">Wyślij zamówienie</option>
+                                <option value="Z" >Anuluj Zamówienie</option>
+                            </select>
+                            <button type='submit' className='btn btn-primary btn'> wykonaj akcję</button>
+                        </form>
+                    </div>
                     <div className='col-sm-3 d-block col-4'>
                         {!order.finished && <button className='btn btn-primary' onClick={finsihOrder}>Zakończ zamówienie</button>}
                     </div>
@@ -291,7 +389,7 @@ const Order = ({order, bearer, onReturn, changePage, page}) => {
     }
     return (
         <div>
-            {order !== undefined && client !== undefined  ? source() : <h1>ładowanie, proszę czekać...</h1>}
+            {id === -1 && pId === -1 && client  ? source() : <h1>ładowanie, proszę czekać...</h1>}
         </div>
     )
 }
