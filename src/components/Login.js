@@ -5,8 +5,8 @@ const Login = ({onReturn, onLogin}) => {
     const [password, setPassword] = useState("")
     return (
         <div className='row align-items-center justify-content-center g-0' style={{minHeight: '80vh'}}>
-            <div className='col-md-4 col-2'></div>
-                <div className='bg-light text-dark text-center col-md-4 col-8 py-3 border-primary border-2 border'>
+            <div className='col-md-4 col-xxl-5 col-2'></div>
+                <div className='bg-light text-dark text-center col-md-4 col-xxl-2 col-8 py-3 border-primary border-2 border'>
                     <h5>Login</h5>
                     <form onSubmit={(e) => {
                         e.preventDefault()
@@ -14,7 +14,7 @@ const Login = ({onReturn, onLogin}) => {
                     }}>
                         <div className='row p-1'>
                             <div className="col-sm-4 text-sm-end text-start col-12">Email: </div>
-                            <div className="col-sm-8 col-12"><input type="text" className='form-text w-75' value={login} onChange={(e) => setLogin(e.target.value)} required/></div>
+                            <div className="col-sm-8 col-12"><input type="email" className='form-text w-75' value={login} onChange={(e) => setLogin(e.target.value)} required/></div>
                         </div>
                         <div className="row p-1">
                             <div className="col-sm-4 text-sm-end text-start col-12">Hasło: </div>
@@ -26,7 +26,7 @@ const Login = ({onReturn, onLogin}) => {
                         </div>
                     </form>
                 </div>
-            <div className='col-md-4 col-2'></div>
+            <div className='col-md-4 col-xxl-5 col-2'></div>
         </div>
     )
 }

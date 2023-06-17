@@ -109,35 +109,40 @@ const User = ({onReturn, bearer, id, refresh}) => {
             <div className='row my-2'>
                 <div className='col-6'>Imie: </div>
                 <div className='col-6'>
-                    <input type="text" className='form-text w-100' value={user.firstName} onChange={(e) => setUser({...user, firstName: e.target.value})} required={true}/>
+                    <input type="text" className='form-text w-100'
+                           value={user.firstName} onChange={(e) => setUser({...user, firstName: e.target.value})} required={true}/>
                 </div>
             </div>
 
             <div className='row my-2'>
                 <div className='col-6'>nazwisko: </div>
                 <div className='col-6'>
-                    <input type="text" className='form-text w-100' value={user.lastName} onChange={(e) => setUser({...user, lastName: e.target.value})} required={true}/>
+                    <input type="text" className='form-text w-100'
+                           value={user.lastName} onChange={(e) => setUser({...user, lastName: e.target.value})} required={true}/>
                 </div>
             </div>
 
             <div className='row my-2'>
                 <div className='col-6'>pesel: </div>
                 <div className='col-6'>
-                    <input type="text" className='form-text w-100' value={user.pesel} onChange={(e) => setUser({...user, pesel: e.target.value})} required={true}/>
+                    <input type="text" className='form-text w-100' minLength={11} size={11} pattern='[0123456789]{11}'
+                           value={user.pesel} onChange={(e) => setUser({...user, pesel: e.target.value})} required={true}/>
                 </div>
             </div>
 
             <div className='row my-2'>
                 <div className='col-6'>email: </div>
                 <div className='col-6'>
-                    <input type="text" className='form-text w-100' value={user.email} onChange={(e) => setUser({...user, email: e.target.value})} required={true}/>
+                    <input type="email" className='form-text w-100'
+                           value={user.email} onChange={(e) => setUser({...user, email: e.target.value})} required={true}/>
                 </div>
             </div>
 
             <div className='row my-2'>
                 <div className='col-6'>adres korespondencyjny: </div>
                 <div className='col-6'>
-                    <input type="text" className='form-text w-100' value={user.mailingAddress} onChange={(e) => setUser({...user, mailingAddress: e.target.value})} required={true}/>
+                    <input type="text" className='form-text w-100'
+                           value={user.mailingAddress} onChange={(e) => setUser({...user, mailingAddress: e.target.value})} required={true}/>
                 </div>
             </div>
 
@@ -145,7 +150,8 @@ const User = ({onReturn, bearer, id, refresh}) => {
                 <div className='row my-2'>
                     <div className='col-6'>Nazwa firmy </div>
                     <div className='col-6'>
-                        <input type="text" className='form-text w-100' value={user.companyName} onChange={(e) => setUser({...user, companyName: e.target.value})} required={true}/>
+                        <input type="text" className='form-text w-100'
+                               value={user.companyName} onChange={(e) => setUser({...user, companyName: e.target.value})} required={true}/>
                     </div>
                 </div>
             }
@@ -153,7 +159,8 @@ const User = ({onReturn, bearer, id, refresh}) => {
                 <div className='row my-2'>
                     <div className='col-6'>adres Firmy: </div>
                     <div className='col-6'>
-                        <input type="text" className='form-text w-100' value={user.companyAddress} onChange={(e) => setUser({...user, companyAddress: e.target.value})} required={true}/>
+                        <input type="text" className='form-text w-100'
+                               value={user.companyAddress} onChange={(e) => setUser({...user, companyAddress: e.target.value})} required={true}/>
                     </div>
                 </div>
             }
@@ -161,7 +168,8 @@ const User = ({onReturn, bearer, id, refresh}) => {
                 <div className='row my-2'>
                     <div className='col-6'>nip </div>
                     <div className='col-6'>
-                        <input type="text" className='form-text w-100' value={user.nip} onChange={(e) => setUser({...user, nip: e.target.value})} required={true}/>
+                        <input type="text" className='form-text w-100' size={11} minLength={10} pattern='[0-9]{10-11}'
+                               value={user.nip} onChange={(e) => setUser({...user, nip: e.target.value})} required={true}/>
                     </div>
                 </div>
             }
@@ -169,7 +177,8 @@ const User = ({onReturn, bearer, id, refresh}) => {
                 <div className='row my-2'>
                     <div className='col-6'>adres kor. firmy: </div>
                     <div className='col-6'>
-                        <input type="text" className='form-text w-100' value={user.companyMailingAddress} onChange={(e) => setUser({...user, companyMailingAddress: e.target.value})} required={true}/>
+                        <input type="text" className='form-text w-100'
+                               value={user.companyMailingAddress} onChange={(e) => setUser({...user, companyMailingAddress: e.target.value})} required={true}/>
                     </div>
                 </div>
             }

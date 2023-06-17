@@ -1,8 +1,9 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import api from "../api/categories";
 import User from "./User";
 
 const AdminPanel = ({bearer}) => {
+    const [userList, setUserList] = useState()
     const [invUsers, setInvUsers] = useState([])
     const [buisUsers, setBuisUsers] = useState([])
     const [workers, setWorkers] = useState([])
@@ -59,12 +60,50 @@ const AdminPanel = ({bearer}) => {
         setRefresh(true)
     }
 
+    const handleKeyPress = (event) => {
+        if(event.key === 'Enter'){
+            if (event.target.value === "") {
+                setUserList()
+            } else {
+                fetchCustom(`http://127.0.0.1:8000/api/users?firstName[like]=%${event.target.value}%`, setUserList)
+            }
+        }
+    }
+
+     const adminPaneView = () => {
+         return <div>
+             <div className='h3 text-center'>
+                 Panel Administratora
+             </div>
+             <div>
+                 <input className='form-text input-group-text w-100' type="text" placeholder='wyszukaj' onKeyPress={handleKeyPress} />
+             </div>
+             {userList && userList.data.length > 0 ? userListView() : adminTablesView()}
+         </div>
+    }
+
+    const userListView = () => {
+        return  <ul className='list-group list-group-flush'>
+            {userList.data.map(
+                (usr) =>
+                    <li key={usr.id} className='list-group-item hover-zoom'>
+
+                        <div className="row col-12  justify-content-between py-3" onClick={() => {
+                            setId(usr.id)
+                            setPage(0)}}>
+                                <div className='col-6'>{usr.firstName} {usr.lastName}</div>
+
+                            <div className='col-3'>
+
+                            </div>
+                        </div>
+                    </li>
+            )}
+        </ul>
+    }
+
     const adminTablesView = () => {
-        return (
-            <div>
-                <div className='h3 text-center'>
-                    Panel Administratora
-                </div>
+        return (<div>
                 <div className="row">
                     <div className="col-xl-6 col-12 p-4">
                         <div className='h5 text-center'>Użytkownicy prywatni</div>
@@ -278,11 +317,10 @@ const AdminPanel = ({bearer}) => {
                     </div>
                 </div>
             </div>
-
         )
     }
 
-    return page === 1 ?adminTablesView() : <User onReturn={onReturn} bearer={bearer} id={id} refresh={refreshTables}/>
+    return page === 1 ?adminPaneView() : <User onReturn={onReturn} bearer={bearer} id={id} refresh={refreshTables}/>
 
 }
 

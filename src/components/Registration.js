@@ -27,7 +27,7 @@ const Registration = ({onRegistration}) => {
                     <div className='row p-1'>
                         <div className="col-5 text-end">email: </div>
                         <div className="col-7 justify-content-start align-items-start">
-                            <input type="text" className='form-text d-block w-75'
+                            <input type="email" className='form-text d-block w-75'
                                    value={email} onChange={(e) => setEmail(e.target.value)} required/>
                         </div>
                     </div>
@@ -55,7 +55,7 @@ const Registration = ({onRegistration}) => {
                     <div className='row p-1'>
                         <div className="col-5 text-end">Pesel: </div>
                         <div className="col-7 justify-content-start align-items-start">
-                            <input type="text" className='form-text d-block w-75'
+                            <input type="text" className='form-text d-block w-75' minLength={11} size={11} pattern='[0123456789]{11}'
                                    value={pesel} onChange={(e) => setPesel(e.target.value)} maxLength='11' required/>
                         </div>
                     </div>
@@ -84,7 +84,7 @@ const Registration = ({onRegistration}) => {
                             <div className='row p-1'>
                                 <div className="col-5 text-end">nip: </div>
                                 <div className="col-7 justify-content-start align-items-start">
-                                    <input type="text" className='form-text d-block w-75'
+                                    <input type="text" className='form-text d-block w-75' minLength={10} size={11} pattern='[0123456789]'
                                            value={nip ? nip : ""} onChange={(e) => setNip(e.target.value)} maxLength='11' required/>
                                 </div>
                             </div>

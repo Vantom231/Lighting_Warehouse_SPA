@@ -13,6 +13,8 @@ const Nav = ({categoryList, subCategoryList, onCategory, onSubcategory, page}) =
 
                 <div className="p-3">
                     <ul className='nav'>
+                        {page === 2 && <li className={'nav-item btn btn-outline-light col-12 mb-1 border-bottom-0'}><div onClick={() => onCategory(0)}>Wyszukaj</div></li>
+                        }
                         {page === 2 && categoryList.map(
                                 (category) =>
                                     <li key={category.id} className={'nav-item btn btn-outline-light col-12 mb-1 border-bottom-0'}><div onClick={() => onCategory(category.id)}>{category.name}</div></li>

@@ -13,6 +13,7 @@ import Cart from "./components/Cart";
 import WorkPanel from "./components/WorkPanel";
 import Main from "./components/Main";
 import AdminPanel from "./components/AdminPanel";
+import ProductSearch from "./components/ProductSearch";
 
 function App() {
     // site variables
@@ -22,6 +23,7 @@ function App() {
     const [subCategories, setSubCategories] = useState([])
     const [products, setProducts] = useState([])
     const [product, setProduct] = useState([])
+    const [searchTrigger, setSearchTrigger] = useState(false)
 
     // worker page variables
     const [workPanelPage, setWorkPanelPage] = useState(0)
@@ -67,18 +69,24 @@ function App() {
     //API
     //fetch all Subcategories where categoryId
     const fetchSubCategories = async (categoryId) => {
-        try {
-            const response = await api.get(`/subcategories?categoryId[eq]=${categoryId}`)
-            console.log(response.data)
-            setSubCategories(response.data.data)
-        } catch (err) {
-            if (err.response) {
-                //not in 200 response range
-                console.log(err.response.data)
-                console.log(err.response.status)
-                console.log(err.response.headers)
-            } else {
-                console.log(`Error ${err.message}`)
+        if (categoryId === 0) {
+            setSearchTrigger(true)
+            setSubCategories([])
+        } else {
+            try {
+                const response = await api.get(`/subcategories?categoryId[eq]=${categoryId}`)
+                console.log(response.data)
+                setSubCategories(response.data.data)
+                setSearchTrigger(false)
+            } catch (err) {
+                if (err.response) {
+                    //not in 200 response range
+                    console.log(err.response.data)
+                    console.log(err.response.status)
+                    console.log(err.response.headers)
+                } else {
+                    console.log(`Error ${err.message}`)
+                }
             }
         }
     }
@@ -124,6 +132,25 @@ function App() {
     const register = async (email, password, firstName, lastName, pesel,
                             mailAddress, firmName, nip, firmAddress,
                             firmMailingAddress, firm) => {
+
+        let data = {
+            name: firstName,
+                firstName: firstName,
+            lastName: lastName,
+            pesel: pesel,
+            email: email,
+            password: password,
+            mailingAddress: mailAddress,
+            accountType: firm ? 'B' : 'I',
+        }
+        if (firm) {
+            data = {
+                ...data,
+                companyName: firmName,
+                nip: nip,
+                companyMailingAddress: firmMailingAddress,
+                companyAddress: firmAddress}
+        }
         const config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -132,20 +159,7 @@ function App() {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
-            data : JSON.stringify({
-                name: firstName,
-                firstName: firstName,
-                lastName: lastName,
-                pesel: pesel,
-                email: email,
-                password: password,
-                mailingAddress: mailAddress,
-                accountType: firm ? 'B' : 'I',
-                companyName: firmName,
-                nip: nip,
-                companyMailingAddress: firmMailingAddress,
-                companyAddress: firmAddress
-            })
+            data : JSON.stringify(data)
         };
 
         try{
@@ -247,7 +261,7 @@ function App() {
             } else {
                 console.log(`Error ${err.message}`)
             }
-            alert("Proszę się zalogować przed złożeniem zamówienia")
+            changeLoginTrigger(true)
         }
     }
 
@@ -390,12 +404,14 @@ function App() {
                     </div>
                     <div className='col-md-10 col-12' style={{minHeight: "80vh"}}>
                         {
-                            product ? <Product product={product} onCart={addCartItem}  onReturn={returnProduct}/> : <ProductList productList={products} onProduct={fetchProduct}/>
+                            product ? <Product product={product} onCart={addCartItem}  onReturn={returnProduct}/> :
+                            searchTrigger ? <ProductSearch  onProduct={fetchProduct} /> :
+                                <ProductList productList={products} onProduct={fetchProduct}/>
                         }
                     </div>
                 </main>)
         } else if (page === 3) {  // cart
-            return <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} onSubmit={sendOrder} />
+            return <Cart cartList={cartList} onDelete={deleteCartItem} onQuantity={changeQuantity} onSubmit={sendOrder}/>
 
         } else if (page === 4) {  // registration
             return <Registration onRegistration={register} />

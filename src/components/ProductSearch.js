@@ -1,9 +1,37 @@
-import React from "react";
+import React, {useState} from "react";
+import api from "../api/categories";
 
-const ProductList = ({productList, onProduct}) => {
+const ProductSearch = ({onProduct}) => {
+    const [productList, setProductList] = useState([])
 
-    return (
-        <div className='container' style={{minHeight: "80vh"}}>
+    const fetchProducts = async (text) => {
+        try {
+            const response = await api.get(`/products?name[like]=%${text}%`)
+            console.log(response.data)
+            setProductList(response.data.data)
+        } catch (err) {
+            if (err.response) {
+                //not in 200 response range
+                console.log(err.response.data)
+                console.log(err.response.status)
+                console.log(err.response.headers)
+            } else {
+                console.log(`Error ${err.message}`)
+            }
+        }
+    }
+
+    const handleKeyPress = (event) => {
+        if(event.key === 'Enter'){
+            fetchProducts(event.target.value)
+        }
+    }
+
+    return <div>
+        <div className='w-100 p-3'>
+
+            <input className='form-text input-group-text w-100' type="text" placeholder='wyszukaj' onKeyPress={handleKeyPress} />
+
             <ul className='list-group list-group-flush'>
                 {productList && productList.map(
                     (product) =>
@@ -24,9 +52,8 @@ const ProductList = ({productList, onProduct}) => {
                         </li>
                 )}
             </ul>
-
         </div>
-    )
+    </div>
 }
 
-export default ProductList
+export default ProductSearch
