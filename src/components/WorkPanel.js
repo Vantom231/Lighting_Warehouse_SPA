@@ -67,7 +67,7 @@ const WorkPanel = ({page, bearer, changePage, authUser}) => {
             }
             {page === 3 &&
                 <div>
-                    <OrderTable orders={orders} updateOrdersCustom={fetchOrdersCustom} bearer={bearer}/>
+                    <OrderTable orders={orders} updateOrdersCustom={fetchOrdersCustom} bearer={bearer}  changePage={changePage} page={page} refresh={refreshPage} authUser={authUser}/>
                 </div>
             }
         </div>

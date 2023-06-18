@@ -14,6 +14,8 @@ import WorkPanel from "./components/WorkPanel";
 import Main from "./components/Main";
 import AdminPanel from "./components/AdminPanel";
 import ProductSearch from "./components/ProductSearch";
+import User from "./components/User";
+import UserOrderList from "./components/UserOrderList";
 
 function App() {
     // site variables
@@ -336,7 +338,8 @@ function App() {
                 } else {
                     console.log(`Error ${err.message}`)
                 }
-                alert("błędne dane logowania")
+                logout()
+                alert("Użytkonwik usunięty")
             }
 
     }
@@ -446,6 +449,14 @@ function App() {
                     <AdminPanel bearer={bearer}/>
                 </div>
                     )
+        } else if (page === 8) { // edit authUser Panel
+            return   <div className='p-3' style={{minHeight: "80vh"}}>
+                <User onReturn={() => setPage(1)} bearer={bearer} id={authUser.id} refresh={fetchAuthUser}/>
+            </div>
+        } else if (page === 9) { // edit authUser Panel
+            return <div className='p-3' style={{minHeight: "80vh"}}>
+                <UserOrderList bearer={bearer} authUser={authUser}/>
+            </div>
         }
     }
   return (

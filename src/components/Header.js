@@ -22,9 +22,11 @@ const Header = ({onLogin, onLogout, onRegistration, onNav, user}) => {
 
                {user.accountType === 'W' && <li className='nav-link px-2' onClick={() => onNav(5)}>Panel pracownika</li> }
                {user.accountType === 'A' && <li className='nav-link px-2' onClick={() => onNav(7)}>Panel administratora</li> }
+               {(user.accountType === 'I' || user.accountType === 'B') && <li className='nav-link px-2' onClick={() => onNav(9)}>Moje zamówienia</li>}
+
            </ul>
                { user !== "" ? <ul className='nav col-12 col-lg-auto mb-2 justify-content-end mb-md-0'>
-                       <li className='nav-link px-2 mt-1 text-light'>{accountType()}: {user.firstName} {user.lastName}</li>
+                       <li className='nav-link px-2 mt-1' onClick={() => onNav(8)}>{accountType()}: {user.firstName} {user.lastName}</li>
                        <li className='nav-link px-2'>
                            <button className='btn btn-outline-info'  onClick={onLogout}>Wyloguj</button>
                        </li>

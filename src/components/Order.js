@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import api from "../api/categories";
 
-const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
+const Order = ({order, bearer, onReturn, authUser}) => {
     const [client, setClient] = useState()
     const [ids, setIds] = useState([])
     const [id, setId] = useState(-1)
@@ -25,6 +25,7 @@ const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
 
     //load data on render
     useEffect(() => {
+        if (authUser.accountType === 'I' || authUser.accountType === 'B') setActionSelect('X')
         if (order.id) {
             fetchOrderUsers(`http://127.0.0.1:8000/api/orderToUsers?orderId[eq]=${order.id}`)
             fetchOrderProducts(`http://127.0.0.1:8000/api/orderToProducts?orderId[eq]=${order.id}`)
@@ -45,10 +46,14 @@ const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
     // looking for client in users Collection on userCollection change // add id verification
     useEffect( () => {
 
-        if (userCollection.length > 0) {
+        if (authUser.accountType == 'I' || authUser.accountType == 'B') {
+            setClient([authUser])
+        } else if (userCollection.length > 0) {
             let tempId = orderUsers.filter((e) => e.role.toUpperCase() === 'C')
             let tempClient = userCollection.filter((e) => e.id === tempId.userId)[0]
             setClient(tempClient)
+            console.log("client Found")
+            console.log(tempClient)
         }
     }, [userCollection])
 
@@ -168,6 +173,12 @@ const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
 
     }
 
+    const cancelOrder = () => {
+        setActionSelect("X")
+        console.log(actionSelect)
+        sendAction()
+    }
+
     const finsihOrder = async () => {
         let currentdate = new Date();
         let datetime = "" + currentdate.getFullYear() + "-"
@@ -225,7 +236,7 @@ const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
     }
 
     const userTable = () => {
-        return <table className='table'>
+        if (client && client.length > 0) return <table className='table'>
             <thead>
             <tr>
                 <th scope='col'> imie i nazwisko</th>
@@ -283,32 +294,37 @@ const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
 
             </tbody>
         </table>
+
+        return <h2> Użytkownik usunięty</h2>
     }
 
     const workersTable = () => {
-        return <table className='table'>
-            <thead>
-            <tr>
-                <th scope='col'> imie i nazwisko</th>
-                <th scope='col'> email</th>
-                <th scope='col'> akcja</th>
-            </tr>
-            </thead>
-            <tbody>
+        if (authUser.accountType === 'W') {
+            return <table className='table'>
+                <thead>
+                <tr>
+                    <th scope='col'> imie i nazwisko</th>
+                    <th scope='col'> email</th>
+                    <th scope='col'> akcja</th>
+                </tr>
+                </thead>
+                <tbody>
 
                 {orderUsers.map((order) => {
-                    return userCollection.filter((e) => e[0].id === order.userId)[0].map((usr) => {
-                        return <tr>
-                        <td>{usr.firstName} {usr.lastName}</td>
-                        <td>{usr.email}</td>
-                        <td>{actionTranslate[order.role]}</td>
-                        </tr>
+                    let usr = userCollection.filter((e) => e[0] && e[0].id === order.userId)[0]
+                    if (usr) return usr.map((usr) => {
+                            return <tr>
+                                <td>{usr.firstName} {usr.lastName}</td>
+                                <td>{usr.email}</td>
+                                <td>{actionTranslate[order.role]}</td>
+                            </tr>
                         }
                     )
                 })}
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        }
     }
 
     const productTable = () => {
@@ -365,12 +381,15 @@ const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
                         <button className='btn btn-danger' onClick={() => onReturn(0)}>Powrót</button>
                     </div>
                     <div className='col-sm-6 col-4'>
+                        { authUser.accountType === 'W' ?
                         <form onSubmit={(e) => {
                             e.preventDefault()
                             console.log(actionSelect)
                             sendAction()
                         }}>
-                            <select className='form-select-sm' value={actionSelect} onChange={(e) => {setActionSelect(e.target.value)}} required>
+
+                            { !order.finished && <div>
+                                <select className='form-select-sm' value={actionSelect} onChange={(e) => {setActionSelect(e.target.value)}} required>
                                 <option value="" selected disabled>Wybierz akcję</option>
                                 <option value="A">Akceptuj Zamówienie</option>
                                 <option value="P">Przygotuj Zamówienie</option>
@@ -378,12 +397,19 @@ const Order = ({order, bearer, onReturn, changePage, page, authUser}) => {
                                 <option value="Z" >Anuluj Zamówienie</option>
                             </select>
                             <button type='submit' className='btn btn-primary btn'> wykonaj akcję</button>
-                        </form>
+                            </div>}
+                        </form> :
+                        <button className='btn btn-danger' onClick={cancelOrder}>Anuluj zamówienie</button>
+                        }
+
                     </div>
+                    { authUser.accountType === 'W' &&
                     <div className='col-sm-3 d-block col-4'>
                         {!order.finished && <button className='btn btn-primary' onClick={finsihOrder}>Zakończ zamówienie</button>}
                     </div>
+                    }
                 </div>
+
             </div>
         )
     }
